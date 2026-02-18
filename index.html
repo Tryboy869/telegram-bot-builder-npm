@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Telegram Bot Builder — Powered by API in Browser</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --border: #e7e5e4;
+  --text: #1c1917;
+  --muted: #78716c;
+  --accent: #2563eb;
+  --accent-light: #dbeafe;
+  --success: #16a34a;
+  --success-light: #dcfce7;
+  --amber: #f59e0b;
+  --amber-light: #fef3c7;
+  --red: #dc2626;
+  --shadow: rgba(0,0,0,0.04);
+  --radius: 16px;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 3rem;
+}
+
+header {
+  background: rgba(255,255,255,0.85);
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
+
+.logo { display: flex; align-items: center; gap: 0.75rem; }
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-icon svg { width: 20px; height: 20px; fill: white; }
+.logo-text h1 { font-family: var(--serif); font-size: 1.125rem; font-weight: 400; font-style: italic; }
+.logo-text span { font-size: 0.75rem; color: var(--muted); }
+
+.container { max-width: 640px; margin: 0 auto; padding: 1.5rem; }
+
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px var(--shadow);
+}
+
+.section-title {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  font-style: italic;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.field { margin-bottom: 1.25rem; }
+.field:last-child { margin-bottom: 0; }
+
+label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+label .required { color: var(--red); }
+
+input, textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  transition: all 0.2s;
+}
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
+
+.hint { font-size: 0.8125rem; color: var(--muted); margin-top: 0.375rem; }
+
+.function-card {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: var(--bg);
+  transition: all 0.2s;
+}
+.function-card.active { border-color: var(--accent); background: var(--accent-light); }
+
+.function-header { display: flex; justify-content: space-between; margin-bottom: 0.75rem; }
+.function-name { font-weight: 600; font-size: 0.9375rem; }
+.function-desc { font-size: 0.8125rem; color: var(--muted); margin-bottom: 0.75rem; line-height: 1.5; }
+
+.toggle { position: relative; width: 44px; height: 24px; cursor: pointer; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0;
+  background: #d6d3d1;
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+.toggle-slider::before {
+  content: ''; position: absolute;
+  width: 18px; height: 18px;
+  left: 3px; top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+.toggle input:checked + .toggle-slider { background: var(--accent); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+.expandable { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+.expandable.open { max-height: 500px; }
+
+.btn {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.btn-success { background: var(--success); color: white; box-shadow: 0 1px 3px var(--shadow); }
+.btn-success:active { transform: scale(0.98); }
+.btn-success:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-secondary { background: var(--surface); border: 1.5px solid var(--border); color: var(--text); }
+
+.status-banner {
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  line-height: 1.5;
+}
+.status-banner.info { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent); }
+.status-banner.success { background: var(--success-light); color: var(--success); border: 1px solid var(--success); }
+.status-banner.warning { background: var(--amber-light); color: #92400e; border: 1px solid var(--amber); }
+
+.stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.75rem; margin-top: 1rem; }
+.stat-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.875rem; text-align: center; }
+.stat-value { font-size: 1.75rem; font-weight: 700; color: var(--accent); line-height: 1; }
+.stat-label { font-size: 0.7rem; color: var(--muted); margin-top: 0.25rem; text-transform: uppercase; }
+
+.msg-feed {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+.bubble { display: flex; flex-direction: column; max-width: 82%; }
+.bubble-in { align-self: flex-start; }
+.bubble-out { align-self: flex-end; }
+.bubble-sender { font-size: 0.7rem; color: var(--muted); margin-bottom: 0.2rem; }
+.bubble-body { padding: 0.55rem 0.85rem; border-radius: 10px; font-size: 0.875rem; line-height: 1.45; }
+.bubble-in .bubble-body { background: var(--surface); border: 1px solid var(--border); }
+.bubble-out .bubble-body { background: var(--accent-light); border: 1px solid #93c5fd; color: var(--accent); }
+.bubble-time { font-size: 0.65rem; color: var(--muted); margin-top: 0.15rem; }
+
+.feed-empty { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--muted); font-size: 0.85rem; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.394 13.9l-2.967-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.761.659z"/></svg>
+    </div>
+    <div class="logo-text">
+      <h1>Bot Builder</h1>
+      <span>Powered by api-in-browser</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="status-banner info" id="status">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+    <div>
+      <strong>Browser-powered bot using api-in-browser npm package</strong><br>
+      Configure your token, customize commands, press Start. Bot runs while this tab is open.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Configuration</div>
+    <div class="field">
+      <label>Telegram Bot Token <span class="required">*</span></label>
+      <input type="password" id="token" placeholder="1234567890:ABCdef..." autocomplete="off">
+      <div class="hint">Get from @BotFather → /newbot</div>
+    </div>
+    <div class="badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      Using api-in-browser@1.0.0-beta
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Commands</div>
+
+    <div class="function-card active" data-func="start">
+      <div class="function-header">
+        <div class="function-name">/start</div>
+        <label class="toggle">
+          <input type="checkbox" checked data-toggle="start">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="function-desc">Welcome message</div>
+      <div class="expandable open">
+        <textarea id="cmd-start">Hello! I'm your bot running from a browser tab using api-in-browser. Try /help!</textarea>
+      </div>
+    </div>
+
+    <div class="function-card active" data-func="help">
+      <div class="function-header">
+        <div class="function-name">/help</div>
+        <label class="toggle">
+          <input type="checkbox" checked data-toggle="help">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="function-desc">Command list</div>
+      <div class="expandable open">
+        <textarea id="cmd-help">Available commands:
+/start — Start the bot
+/help — Show this list
+/ping — Test bot
+/time — Current time
+/about — About this bot</textarea>
+      </div>
+    </div>
+
+    <div class="function-card active" data-func="ping">
+      <div class="function-header">
+        <div class="function-name">/ping</div>
+        <label class="toggle">
+          <input type="checkbox" checked data-toggle="ping">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="function-desc">Check if alive</div>
+      <div class="expandable open">
+        <textarea id="cmd-ping">Pong! 🏓 Bot is alive and running.</textarea>
+      </div>
+    </div>
+
+    <div class="function-card active" data-func="time">
+      <div class="function-header">
+        <div class="function-name">/time</div>
+        <label class="toggle">
+          <input type="checkbox" checked data-toggle="time">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="function-desc">Show current time</div>
+      <div class="expandable open">
+        <textarea id="cmd-time">Current time: {time}</textarea>
+        <div class="hint" style="margin-top:0.5rem">Use {time} for current time</div>
+      </div>
+    </div>
+
+    <div class="function-card active" data-func="about">
+      <div class="function-header">
+        <div class="function-name">/about</div>
+        <label class="toggle">
+          <input type="checkbox" checked data-toggle="about">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="function-desc">About the bot</div>
+      <div class="expandable open">
+        <textarea id="cmd-about">I'm powered by api-in-browser (npm package) — a framework that turns any browser tab into a REST API. No servers needed! 🚀
+
+Built by Daouda Abdoul Anzize
+GitHub: github.com/Tryboy869/api-in-browser</textarea>
+      </div>
+    </div>
+
+    <div class="function-card" data-func="default">
+      <div class="function-header">
+        <div class="function-name">Default reply</div>
+        <label class="toggle">
+          <input type="checkbox" data-toggle="default">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="function-desc">Reply to unknown messages</div>
+      <div class="expandable">
+        <textarea id="cmd-default">You said: "{text}"
+
+Try /help to see available commands.</textarea>
+        <div class="hint" style="margin-top:0.5rem">Use {text} for user's message</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="section-title">Runtime</div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-msgs">0</div>
+        <div class="stat-label">Messages</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-replies">0</div>
+        <div class="stat-label">Replies</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-polls">0</div>
+        <div class="stat-label">Polls</div>
+      </div>
+    </div>
+
+    <div class="msg-feed" id="feed">
+      <div class="feed-empty">No messages yet — start the bot</div>
+    </div>
+  </div>
+
+  <button class="btn btn-success" id="btn-start" onclick="startBot()" style="margin-bottom:0.75rem">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polygon points="5 3 19 12 5 21 5 3"/>
+    </svg>
+    Start Bot
+  </button>
+
+  <button class="btn btn-secondary" id="btn-stop" onclick="stopBot()" disabled>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+    </svg>
+    Stop Bot
+  </button>
+
+</div>
+
+<script type="module">
+// ================================================================
+// IMPORT API IN BROWSER FROM CDN
+// ================================================================
+import API from 'https://cdn.jsdelivr.net/npm/api-in-browser/src/index.js';
+
+// ================================================================
+// STATE
+// ================================================================
+let api = null;
+let stats = { msgs: 0, replies: 0, polls: 0 };
+
+// ================================================================
+// TOGGLE HANDLERS
+// ================================================================
+document.querySelectorAll('[data-toggle]').forEach(toggle => {
+  toggle.addEventListener('change', e => {
+    const func = e.target.dataset.toggle;
+    const card = document.querySelector(`[data-func="${func}"]`);
+    const content = card.querySelector('.expandable');
+    if (e.target.checked) {
+      content.classList.add('open');
+      card.classList.add('active');
+    } else {
+      content.classList.remove('open');
+      card.classList.remove('active');
+    }
+  });
+});
+
+// ================================================================
+// GET ACTIVE COMMANDS
+// ================================================================
+function getCommands() {
+  const commands = {};
+  document.querySelectorAll('[data-toggle]').forEach(toggle => {
+    if (toggle.checked) {
+      const key = toggle.dataset.toggle;
+      const input = document.getElementById(`cmd-${key}`);
+      commands[key] = input ? input.value : '';
+    }
+  });
+  return commands;
+}
+
+// ================================================================
+// START BOT
+// ================================================================
+window.startBot = async () => {
+  const token = document.getElementById('token').value.trim();
+  if (!token) {
+    setStatus('warning', 'Please enter your Telegram Bot Token');
+    return;
+  }
+
+  setStatus('info', 'Verifying token...');
+
+  // Verify token
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/getMe`);
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.description);
+    
+    setStatus('success', `Bot verified: ${data.result.first_name} (@${data.result.username}) — Polling started`);
+  } catch(e) {
+    setStatus('warning', `Token error: ${e.message}`);
+    return;
+  }
+
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('btn-stop').disabled = false;
+
+  // Create API instance
+  api = new API({
+    polling: true,
+    pollingInterval: 2000,
+    debug: true
+  });
+
+  // Setup bot with commands
+  const commands = getCommands();
+  const commandHandlers = {};
+
+  // Build command handlers
+  for (const [cmd, text] of Object.entries(commands)) {
+    if (cmd === 'default') continue;
+    commandHandlers[`/${cmd}`] = (msg) => {
+      stats.msgs++;
+      document.getElementById('stat-msgs').textContent = stats.msgs;
+      addBubble(msg.from.first_name, msg.text, 'in');
+      
+      const reply = text
+        .replace('{time}', new Date().toLocaleTimeString())
+        .replace('{text}', msg.text);
+      
+      stats.replies++;
+      document.getElementById('stat-replies').textContent = stats.replies;
+      addBubble('Bot', reply, 'out');
+      
+      return reply;
+    };
+  }
+
+  // Default handler
+  if (commands.default) {
+    commandHandlers['default'] = (msg) => {
+      stats.msgs++;
+      document.getElementById('stat-msgs').textContent = stats.msgs;
+      addBubble(msg.from.first_name, msg.text, 'in');
+      
+      const reply = commands.default.replace('{text}', msg.text);
+      
+      stats.replies++;
+      document.getElementById('stat-replies').textContent = stats.replies;
+      addBubble('Bot', reply, 'out');
+      
+      return reply;
+    };
+  }
+
+  // Start bot
+  api.telegramBot(token, commandHandlers);
+  api.listen(() => {
+    console.log('✅ Bot running with api-in-browser');
+  });
+
+  // Track polls
+  setInterval(() => {
+    stats.polls++;
+    document.getElementById('stat-polls').textContent = stats.polls;
+  }, 2000);
+};
+
+// ================================================================
+// STOP BOT
+// ================================================================
+window.stopBot = () => {
+  if (api) {
+    api.stop();
+    api = null;
+  }
+  document.getElementById('btn-start').disabled = false;
+  document.getElementById('btn-stop').disabled = true;
+  setStatus('info', 'Bot stopped');
+};
+
+// ================================================================
+// UI HELPERS
+// ================================================================
+function setStatus(type, msg) {
+  const icons = {
+    info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+    success: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+    warning: '<path d="m10.29 3.86-7.72 13a2 2 0 0 0 1.71 3h15.43a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'
+  };
+  const el = document.getElementById('status');
+  el.className = `status-banner ${type}`;
+  el.innerHTML = `
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0">${icons[type]}</svg>
+    <div>${esc(msg)}</div>`;
+}
+
+function addBubble(sender, text, dir) {
+  const feed = document.getElementById('feed');
+  document.querySelector('.feed-empty')?.remove();
+
+  const time = new Date().toLocaleTimeString();
+  const el = document.createElement('div');
+  el.className = `bubble bubble-${dir}`;
+  el.innerHTML = `
+    <div class="bubble-sender">${esc(sender)}</div>
+    <div class="bubble-body">${esc(text)}</div>
+    <div class="bubble-time">${time}</div>`;
+  feed.appendChild(el);
+  
+  while (feed.children.length > 60) feed.removeChild(feed.firstChild);
+  feed.scrollTop = feed.scrollHeight;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+
+</body>
+</html>
