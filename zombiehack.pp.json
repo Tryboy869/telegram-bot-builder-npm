@@ -1,0 +1,12 @@
+{
+  "version": "1.0",
+  "domain": "telegram-bot-builder-npm.vercel.app",
+  "issued_at": "2026-02-22T22:46:16.043Z",
+  "expires_at": "2027-02-22T22:46:16.060Z",
+  "html_origin": "https://fullstack-html-alpha.vercel.app",
+  "pubkey": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5+x5qBBQCWOfNyjf3y6k\ncvO2BIVw9ARjqQv534muCOjrRQbQT1U8+N+IBn+GS70pGUMdjEkI3a+skOLYD/I+\nEO94pZ/krRNxonEz+o4U9NP2587c3Wjr9o/2FKphCh36lVS6T2liP+a7EH89PihL\nfO9KYLjO8+cXUySCuHt4XXylK7NNDL+3oKhipR0g07PVQKMOmDRdfhBBsAKnnCaa\nRbBl0k9iRVp/aDWEwHl0VyBoom82ZiK6MnN+R6Wk4D/LZNFU3pFiRHibTiu4RCg5\nohYlkvtat9U8PO1Y++m4/fcWfAoWJK5fOuRPvRKYzqWzNn4iykML73oL8AgWQHTL\nCQIDAQAB\n-----END PUBLIC KEY-----",
+  "signature": "ZdVU3a16/in6XvFgR9iZDpAzoF/1KXXbKC390Q4bfjH+/Zlbzpig5tpSwzIa+oATAfAVNOnLovgv8FZ8z8IZaKzwNCf3Zk3zAxwjUXHlQnX6yU69H7Sb1DGkNAS39mf1C0vMcOim+c4w5/6NLuHLOXJpJ86hehP+dPY6UNb4dvOIi0E6uSA8pvOhRENlYinf61BBM/HEvIx1CiGlDZeNdKcnx46ZSKEIJL6mUznsCGO51i1E96VA3rSJgk3CzOHzBOZdaZKZW+z7Ns0BbPZAmbHinNVvrMygQy5r5BwVA190+gtAhRXqGtU5yCY5YKvw6kcO3Re0Uotc9rg87yoJaA==",
+  "scan_config": {
+    "rate_limit_ms": 300
+  }
+}
